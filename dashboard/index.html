@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>灵眸 Dashboard v2.0 - 多 Agent 协调平台</title>
+    <title>灵眸 Dashboard v2.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -13,6 +13,7 @@
             --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --purple-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
         
         body {
@@ -20,109 +21,173 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             min-height: 100vh;
             padding: 20px;
+            background-attachment: fixed;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         /* 布局容器 */
         .layout-container {
             display: flex;
-            min-height: calc(100vh - 40px);
             gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
         }
         
         /* 侧边栏 */
         .sidebar {
-            width: 260px;
-            background: rgba(255, 255, 255, 0.95);
+            width: 280px;
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            padding: 40px 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             position: sticky;
             top: 20px;
             height: calc(100vh - 40px);
             overflow-y: auto;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .sidebar:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.2);
         }
         
         .logo {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 32px;
+            font-weight: 800;
             background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 30px;
-            padding: 0 10px;
+            margin-bottom: 40px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 16px;
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+        }
+        
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-        
-        .nav-item {
-            padding: 16px 20px;
-            border-radius: 12px;
-            border: none;
-            background: transparent;
-            color: #4a5568;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-            text-align: left;
-            display: flex;
-            align-items: center;
             gap: 12px;
         }
         
+        .nav-item {
+            padding: 18px 24px;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            background: transparent;
+            color: #4a5568;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: -1;
+        }
+        
         .nav-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(4px);
+            transform: translateX(8px);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-item:hover::before {
+            opacity: 0.1;
         }
         
         .nav-item.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+            transform: translateX(8px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-item.active::before {
+            opacity: 1;
         }
         
         .nav-icon {
-            font-size: 20px;
+            font-size: 24px;
+            transition: transform 0.3s;
+        }
+        
+        .nav-item:hover .nav-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+        
+        .nav-item.active .nav-icon {
+            transform: scale(1.2);
         }
         
         /* 主内容区 */
         .main-content {
             flex: 1;
-            max-width: calc(100% - 280px);
             padding: 20px 0;
         }
         
         .page {
             display: none;
+            animation: fadeIn 0.5s ease;
         }
         
         .page.active {
             display: block;
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         /* 统计卡片 */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 24px;
             margin-bottom: 30px;
         }
         
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .stat-card::before {
@@ -131,53 +196,82 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 6px;
             background: var(--primary-gradient);
+            border-radius: 24px 24px 0 0;
+        }
+        
+        .stat-card:nth-child(2)::before {
+            background: var(--success-gradient);
+        }
+        
+        .stat-card:nth-child(3)::before {
+            background: var(--warning-gradient);
+        }
+        
+        .stat-card:nth-child(4)::before {
+            background: var(--purple-gradient);
         }
         
         .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         }
         
         .stat-value {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 56px;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+        
+        .stat-card:nth-child(2) .stat-value {
+            background: var(--success-gradient);
+        }
+        
+        .stat-card:nth-child(3) .stat-value {
+            background: var(--warning-gradient);
+        }
+        
+        .stat-card:nth-child(4) .stat-value {
+            background: var(--purple-gradient);
         }
         
         .stat-label {
             color: #718096;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         /* 内容区块 */
         .content-section {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            margin-bottom: 30px;
+            padding-bottom: 24px;
+            border-bottom: 3px solid rgba(102, 126, 234, 0.1);
         }
         
         .section-title {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 32px;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -187,71 +281,99 @@
         /* Agent 列表 */
         .agent-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
         }
         
         .agent-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.9));
-            border-radius: 16px;
-            padding: 25px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));
+            border-radius: 20px;
+            padding: 30px;
             border: 2px solid rgba(102, 126, 234, 0.1);
-            transition: all 0.3s;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .agent-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+        
+        .agent-card:hover::after {
+            left: 100%;
         }
         
         .agent-card:hover {
-            border-color: rgba(102, 126, 234, 0.3);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 48px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
         }
         
         .agent-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 18px;
+            margin-bottom: 20px;
         }
         
         .agent-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
             background: var(--primary-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 32px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s;
+        }
+        
+        .agent-card:hover .agent-avatar {
+            transform: scale(1.1) rotate(5deg);
         }
         
         .agent-name {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
             color: #2d3748;
         }
         
         .agent-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .status-active {
-            background: rgba(16, 185, 129, 0.15);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
             color: #059669;
+            border: 2px solid rgba(16, 185, 129, 0.3);
         }
         
         .status-idle {
-            background: rgba(245, 158, 11, 0.15);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2));
             color: #d97706;
+            border: 2px solid rgba(245, 158, 11, 0.3);
         }
         
         .agent-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-            padding-top: 15px;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
             border-top: 2px solid rgba(102, 126, 234, 0.1);
         }
         
@@ -260,107 +382,190 @@
         }
         
         .agent-stat-value {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
         .agent-stat-label {
-            font-size: 12px;
+            font-size: 13px;
             color: #718096;
-            margin-top: 5px;
+            margin-top: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
         
         /* Token 统计 */
         .token-chart {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
         
         .token-bar {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .token-bar:hover {
+            transform: translateX(8px);
+            border-color: rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
         }
         
         .token-bar-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .token-bar-label {
-            font-weight: 600;
+            font-weight: 700;
             color: #4a5568;
+            font-size: 16px;
         }
         
         .token-bar-value {
-            font-weight: 700;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-size: 18px;
         }
         
         .token-bar-progress {
-            height: 12px;
+            height: 14px;
             background: rgba(102, 126, 234, 0.2);
-            border-radius: 6px;
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .token-bar-fill {
             height: 100%;
             background: var(--primary-gradient);
-            border-radius: 6px;
-            transition: width 0.5s ease;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            position: relative;
         }
         
-        /* 按钮 */
-        .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
+        .token-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
         }
         
-        .btn-primary {
-            background: var(--primary-gradient);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         /* 表格 */
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
         
         .data-table th {
-            padding: 15px;
+            padding: 18px 15px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             color: #718096;
-            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            border-bottom: 3px solid rgba(102, 126, 234, 0.2);
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
         }
         
         .data-table td {
-            padding: 15px;
+            padding: 18px 15px;
             border-bottom: 1px solid rgba(102, 126, 234, 0.05);
             color: #4a5568;
+            transition: all 0.3s;
         }
         
         .data-table tr:hover {
-            background: rgba(102, 126, 234, 0.05);
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05), transparent);
+        }
+        
+        .data-table tr:hover td {
+            transform: translateX(4px);
+        }
+        
+        /* 按钮 */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--purple-gradient);
         }
     </style>
 </head>
@@ -368,130 +573,136 @@
     <div class="layout-container">
         <!-- 侧边栏 -->
         <aside class="sidebar">
-            <div class="logo">🦞 灵眸</div>
+            <div class="logo">🦞 灵眸 Dashboard</div>
             <nav class="nav-menu">
                 <button class="nav-item active" onclick="switchPage('overview')">
                     <span class="nav-icon">📊</span>
-                    <span>概览</span>
+                    <span>数据概览</span>
                 </button>
                 <button class="nav-item" onclick="switchPage('agents')">
                     <span class="nav-icon">🤖</span>
-                    <span>Agent</span>
+                    <span>Agent 管理</span>
                 </button>
                 <button class="nav-item" onclick="switchPage('tokens')">
                     <span class="nav-icon">💰</span>
-                    <span>Token</span>
+                    <span>Token 统计</span>
                 </button>
                 <button class="nav-item" onclick="switchPage('tasks')">
                     <span class="nav-icon">📋</span>
-                    <span>任务</span>
+                    <span>任务列表</span>
                 </button>
             </nav>
         </aside>
         
         <!-- 主内容区 -->
         <main class="main-content">
-        <!-- 概览页面 -->
-        <div id="overview" class="page active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-agents">0</div>
-                    <div class="stat-label">🤖 活跃 Agent</div>
+            <!-- 概览页面 -->
+            <div id="overview" class="page active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-agents">0</div>
+                        <div class="stat-label">🤖 活跃 Agent</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-tasks">0</div>
+                        <div class="stat-label">📋 总任务数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-tokens">0</div>
+                        <div class="stat-label">💰 Token 消耗</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-cost">¥0</div>
+                        <div class="stat-label">💵 总费用</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-tasks">0</div>
-                    <div class="stat-label">📋 总任务数</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-tokens">0</div>
-                    <div class="stat-label">💰 Token 消耗</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-cost">¥0</div>
-                    <div class="stat-label">💵 总费用</div>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">🎯 系统状态</h2>
-                </div>
-                <div id="system-status">
-                    <p style="color: #718096;">正在加载...</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Agent 页面 -->
-        <div id="agents" class="page">
-            <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">🤖 Agent 管理</h2>
-                    <button class="btn btn-primary" onclick="refreshAgents()">🔄 刷新</button>
-                </div>
-                <div class="agent-grid" id="agent-list">
-                    <!-- Agent 卡片将由 JS 动态生成 -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- Token 页面 -->
-        <div id="tokens" class="page">
-            <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">💰 Token 统计</h2>
-                    <button class="btn btn-primary" onclick="refreshTokens()">🔄 刷新</button>
-                </div>
-                <div class="token-chart" id="token-chart">
-                    <!-- Token 图表将由 JS 动态生成 -->
+                
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🎯 系统状态</h2>
+                    </div>
+                    <div id="system-status">
+                        <p style="color: #718096; text-align: center; padding: 40px; font-size: 16px;">正在加载数据...</p>
+                    </div>
                 </div>
             </div>
             
-            <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">📊 使用明细</h2>
+            <!-- Agent 页面 -->
+            <div id="agents" class="page">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🤖 Agent 管理</h2>
+                        <button class="btn btn-primary" onclick="loadAgents()">
+                            <span>🔄</span> 刷新数据
+                        </button>
+                    </div>
+                    <div class="agent-grid" id="agent-list">
+                        <!-- Agent 卡片将由 JS 动态生成 -->
+                    </div>
                 </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>模型</th>
-                            <th>输入 Token</th>
-                            <th>输出 Token</th>
-                            <th>总计</th>
-                            <th>费用</th>
-                        </tr>
-                    </thead>
-                    <tbody id="token-details">
-                        <!-- 明细将由 JS 动态生成 -->
-                    </tbody>
-                </table>
             </div>
-        </div>
-        
-        <!-- 任务页面 -->
-        <div id="tasks" class="page">
-            <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">📋 任务管理</h2>
-                    <button class="btn btn-primary" onclick="refreshTasks()">🔄 刷新</button>
+            
+            <!-- Token 页面 -->
+            <div id="tokens" class="page">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">💰 Token 统计</h2>
+                        <button class="btn btn-primary" onclick="loadTokens()">
+                            <span>🔄</span> 刷新数据
+                        </button>
+                    </div>
+                    <div class="token-chart" id="token-chart">
+                        <!-- Token 图表将由 JS 动态生成 -->
+                    </div>
                 </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>任务 ID</th>
-                            <th>标题</th>
-                            <th>状态</th>
-                            <th>优先级</th>
-                            <th>Agent</th>
-                            <th>时间</th>
-                        </tr>
-                    </thead>
-                    <tbody id="task-list">
-                        <!-- 任务列表将由 JS 动态生成 -->
-                    </tbody>
-                </table>
+                
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📊 使用明细</h2>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>模型</th>
+                                <th>输入 Token</th>
+                                <th>输出 Token</th>
+                                <th>总计</th>
+                                <th>费用</th>
+                            </tr>
+                        </thead>
+                        <tbody id="token-details">
+                            <!-- 明细将由 JS 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+            
+            <!-- 任务页面 -->
+            <div id="tasks" class="page">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📋 任务管理</h2>
+                        <button class="btn btn-primary" onclick="loadTasks()">
+                            <span>🔄</span> 刷新数据
+                        </button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>任务 ID</th>
+                                <th>标题</th>
+                                <th>状态</th>
+                                <th>优先级</th>
+                                <th>Agent</th>
+                                <th>时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-list">
+                            <!-- 任务列表将由 JS 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
     </div>
     
@@ -528,7 +739,7 @@
         // 加载 Agent 列表
         async function loadAgents() {
             const agentList = document.getElementById('agent-list');
-            agentList.innerHTML = '<p style="color: #718096; text-align: center; padding: 40px;">加载中...</p>';
+            agentList.innerHTML = '<p style="color: #718096; text-align: center; padding: 40px; font-size: 18px;">✨ 加载中...</p>';
             
             // 模拟数据（后续替换为真实 API）
             const agents = [
@@ -541,10 +752,10 @@
                 <div class="agent-card">
                     <div class="agent-header">
                         <div class="agent-avatar">🤖</div>
-                        <div>
+                        <div style="flex: 1;">
                             <div class="agent-name">${agent.name}</div>
-                            <span class="agent-status status-${agent.status}">${agent.status === 'active' ? '🟢 工作中' : '🟡 空闲'}</span>
                         </div>
+                        <span class="agent-status status-${agent.status}">${agent.status === 'active' ? '🟢 工作中' : '🟡 空闲'}</span>
                     </div>
                     <div class="agent-stats">
                         <div class="agent-stat">
@@ -622,20 +833,15 @@
             
             taskList.innerHTML = tasks.map(t => `
                 <tr>
-                    <td><code>${t.id}</code></td>
-                    <td>${t.title}</td>
-                    <td><span style="color: ${t.status === 'completed' ? '#10b981' : t.status === 'running' ? '#3b82f6' : '#f59e0b'}">● ${t.status}</span></td>
-                    <td><span style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 4px 12px; border-radius: 12px; font-size: 12px;">${t.priority}</span></td>
-                    <td>${t.agent}</td>
+                    <td><code style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 6px 12px; border-radius: 8px; font-size: 13px;">${t.id}</code></td>
+                    <td style="font-weight: 600;">${t.title}</td>
+                    <td><span style="color: ${t.status === 'completed' ? '#10b981' : t.status === 'running' ? '#3b82f6' : '#f59e0b'}; font-weight: 700;">● ${t.status}</span></td>
+                    <td><span style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)); color: #667eea; padding: 6px 14px; border-radius: 12px; font-size: 13px; font-weight: 700;">${t.priority}</span></td>
+                    <td style="font-weight: 600;">${t.agent}</td>
                     <td style="color: #718096;">${t.time}</td>
                 </tr>
             `).join('');
         }
-        
-        // 刷新函数
-        function refreshAgents() { loadAgents(); }
-        function refreshTokens() { loadTokens(); }
-        function refreshTasks() { loadTasks(); }
         
         // 页面加载时初始化
         loadOverview();
