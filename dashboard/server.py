@@ -73,11 +73,11 @@ async def get_stats():
         sessions_count = 3
     
     stats = {
-        "sessions": sessions_count,
-        "agents": 3,
-        "skills": 24,
-        "token_usage": 115246,
-        "token_cost": 0.48
+        "sessions": 0,
+        "agents": 0,
+        "skills": 0,
+        "token_usage": 0,
+        "token_cost": 0.0
     }
     
     set_cache('stats', stats)

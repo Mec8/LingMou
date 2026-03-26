@@ -840,9 +840,9 @@
                 const res = await fetch('/api/stats');
                 const data = await res.json();
                 if(data.code === 0) {
-                    document.getElementById('stat-agents').textContent = data.data.agents || 3;
+                    document.getElementById('stat-agents').textContent = data.data.agents || 0;
                     document.getElementById('stat-tasks').textContent = data.data.sessions || 0;
-                    document.getElementById('stat-skills').textContent = data.data.skills || 24;
+                    document.getElementById('stat-skills').textContent = data.data.skills || 0;
                     document.getElementById('stat-tokens').textContent = (data.data.token_usage || 0).toLocaleString();
                     document.getElementById('stat-cost').textContent = '¥' + (data.data.token_cost || 0).toFixed(2);
                 }
