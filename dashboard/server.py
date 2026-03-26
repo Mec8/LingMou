@@ -75,6 +75,7 @@ async def get_stats():
     stats = {
         "sessions": sessions_count,
         "agents": 3,
+        "skills": 24,
         "token_usage": 115246,
         "token_cost": 0.48
     }
