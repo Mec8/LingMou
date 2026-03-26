@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵眸 Dashboard - 实时监控</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+        .stat-value {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #718096;
+            font-size: 16px;
+        }
+        
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #718096;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦞 灵眸 Dashboard</h1>
+            <p>实时监控 · 智能分析 · 一目了然</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-tasks">-</div>
+                <div class="stat-label">📋 任务数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-agents">-</div>
+                <div class="stat-label">🤖 Agent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-tokens">-</div>
+                <div class="stat-label">💰 Token</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-cost">-</div>
+                <div class="stat-label">💵 费用</div>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <h2 class="section-title">📊 实时数据</h2>
+            <div id="realtime-data" class="loading">正在加载...</div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadData() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                if (data.code === 0) {
+                    document.getElementById('stat-tasks').textContent = data.data.sessions || 0;
+                    document.getElementById('stat-agents').textContent = data.data.agents || 3;
+                    document.getElementById('stat-tokens').textContent = (data.data.token_usage || 0).toLocaleString();
+                    document.getElementById('stat-cost').textContent = '¥' + (data.data.token_cost || 0).toFixed(2);
+                    document.getElementById('realtime-data').innerHTML = '<p style="color: #10b981;">✅ 数据已更新</p>';
+                }
+            } catch (e) {
+                document.getElementById('realtime-data').innerHTML = '<p style="color: #ef4444;">❌ 加载失败</p>';
+            }
+        }
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
