@@ -185,4 +185,4 @@ if __name__ == "__main__":
     import uvicorn
     print("[LingMou Dashboard v2.0] Starting...")
     print("[URL] http://localhost:2029")
-    uvicorn.run(app, host="0.0.0.0", port=2030)
+    uvicorn.run(app, host="0.0.0.0", port=2031)
