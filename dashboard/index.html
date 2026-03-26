@@ -574,6 +574,10 @@
                     <span class="nav-icon">📊</span>
                     <span>数据概览</span>
                 </button>
+                <button class="nav-item" onclick="switchPage('tickets')">
+                    <span class="nav-icon">🎫</span>
+                    <span>工单系统</span>
+                </button>
                 <button class="nav-item" onclick="switchPage('agents')">
                     <span class="nav-icon">🤖</span>
                     <span>Agent 管理</span>
@@ -689,6 +693,56 @@
                         </thead>
                         <tbody id="token-details">
                             <!-- 明细将由 JS 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 工单系统页面 -->
+            <div id="tickets" class="page">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🎫 工单系统</h2>
+                        <button class="btn btn-primary" onclick="loadTickets()">
+                            <span>🔄</span> 刷新数据
+                        </button>
+                    </div>
+                    
+                    <!-- 工单统计 -->
+                    <div class="stats-grid" style="margin-bottom: 30px;">
+                        <div class="stat-card">
+                            <div class="stat-value" style="font-size: 36px;" id="ticket-total">0</div>
+                            <div class="stat-label">🎫 总工单数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="font-size: 36px;" id="ticket-pending">0</div>
+                            <div class="stat-label">⏳ 待处理</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="font-size: 36px;" id="ticket-processing">0</div>
+                            <div class="stat-label">🔄 处理中</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="font-size: 36px;" id="ticket-completed">0</div>
+                            <div class="stat-label">✅ 已完成</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 工单列表 -->
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>工单 ID</th>
+                                <th>标题</th>
+                                <th>描述</th>
+                                <th>状态</th>
+                                <th>优先级</th>
+                                <th>处理人</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticket-list">
+                            <!-- 工单列表将由 JS 动态生成 -->
                         </tbody>
                     </table>
                 </div>
@@ -832,6 +886,8 @@
             if(pageId === 'agents') loadAgents();
             if(pageId === 'tokens') loadTokens();
             if(pageId === 'tasks') loadTasks();
+            if(pageId === 'tickets') loadTickets();
+            if(pageId === 'skills') loadSkills();
         }
         
         // 加载概览数据
@@ -931,6 +987,38 @@
                     <td>${m.output.toLocaleString()}</td>
                     <td><strong>${m.total.toLocaleString()}</strong></td>
                     <td><strong>¥${m.cost.toFixed(2)}</strong></td>
+                </tr>
+            `).join('');
+        }
+        
+        // 加载工单系统
+        async function loadTickets() {
+            const ticketList = document.getElementById('ticket-list');
+            
+            // 模拟数据
+            const tickets = [
+                { id: 'TKT-001', title: '新闻早报生成', description: '每日自动抓取新闻并生成早报', status: 'completed', priority: 'P2', assignee: 'feishu_main', created: '2026-03-26 08:00' },
+                { id: 'TKT-002', title: '系统安全检查', description: '检查防火墙和 SSH 配置', status: 'processing', priority: 'P1', assignee: 'main', created: '2026-03-26 09:30' },
+                { id: 'TKT-003', title: 'Token 统计优化', description: '优化 Token 统计显示逻辑', status: 'pending', priority: 'P2', assignee: '未分配', created: '2026-03-26 10:15' },
+                { id: 'TKT-004', title: 'UI 界面美化', description: '优化卡片动画效果', status: 'processing', priority: 'P3', assignee: 'frontend', created: '2026-03-26 11:00' },
+                { id: 'TKT-005', title: '数据接口对接', description: '接入 OpenClaw 真实数据', status: 'pending', priority: 'P1', assignee: 'backend', created: '2026-03-26 14:30' }
+            ];
+            
+            // 统计数据
+            document.getElementById('ticket-total').textContent = tickets.length;
+            document.getElementById('ticket-pending').textContent = tickets.filter(t => t.status === 'pending').length;
+            document.getElementById('ticket-processing').textContent = tickets.filter(t => t.status === 'processing').length;
+            document.getElementById('ticket-completed').textContent = tickets.filter(t => t.status === 'completed').length;
+            
+            ticketList.innerHTML = tickets.map(t => `
+                <tr>
+                    <td><code style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)); color: #667eea; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700;">${t.id}</code></td>
+                    <td style="font-weight: 700;">${t.title}</td>
+                    <td style="color: #718096; font-size: 14px;">${t.description}</td>
+                    <td><span style="background: ${t.status === 'completed' ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))' : t.status === 'processing' ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))' : 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2))'}; color: ${t.status === 'completed' ? '#059669' : t.status === 'processing' ? '#2563eb' : '#d97706'}; padding: 6px 14px; border-radius: 12px; font-size: 13px; font-weight: 700;">${t.status === 'completed' ? '✅ 已完成' : t.status === 'processing' ? '🔄 处理中' : '⏳ 待处理'}</span></td>
+                    <td><span style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)); color: #667eea; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: 700;">${t.priority}</span></td>
+                    <td style="font-weight: 600;">${t.assignee}</td>
+                    <td style="color: #718096;">${t.created}</td>
                 </tr>
             `).join('');
         }
