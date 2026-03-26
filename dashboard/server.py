@@ -67,6 +67,6 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    print("🦞 灵眸 Dashboard v2.0 启动中...")
-    print("📊 访问地址：http://localhost:2026")
-    uvicorn.run(app, host="0.0.0.0", port=2026)
+    print("[LingMou Dashboard v2.0] Starting...")
+    print("[URL] http://localhost:2026")
+    uvicorn.run(app, host="0.0.0.0", port=2029)
