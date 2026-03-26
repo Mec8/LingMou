@@ -34,9 +34,9 @@
         /* 布局容器 */
         .layout-container {
             display: flex;
-            margin-left: 320px;
-            max-width: calc(1600px - 320px);
-            margin-right: auto;
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 20px 20px 20px 0;
         }
         
         /* 侧边栏 */
@@ -586,6 +586,14 @@
                     <span class="nav-icon">📋</span>
                     <span>任务列表</span>
                 </button>
+                <button class="nav-item" onclick="switchPage('skills')">
+                    <span class="nav-icon">🛠️</span>
+                    <span>技能管理</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('settings')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>板块设置</span>
+                </button>
             </nav>
         </aside>
         
@@ -706,6 +714,103 @@
                             <!-- 任务列表将由 JS 动态生成 -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+            
+            <!-- 技能管理页面 -->
+            <div id="skills" class="page">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🛠️ 技能管理</h2>
+                        <button class="btn btn-primary" onclick="loadSkills()">
+                            <span>🔄</span> 刷新数据
+                        </button>
+                    </div>
+                    <div class="agent-grid" id="skills-list">
+                        <!-- 技能列表将由 JS 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 板块设置页面 -->
+            <div id="settings" class="page">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">⚙️ 板块设置</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div class="agent-card">
+                            <div class="agent-header">
+                                <div class="agent-avatar">📊</div>
+                                <div class="agent-name">数据概览</div>
+                            </div>
+                            <p style="color: #718096; margin-bottom: 15px;">显示核心统计指标卡片</p>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">启用此板块</span>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-card">
+                            <div class="agent-header">
+                                <div class="agent-avatar">🤖</div>
+                                <div class="agent-name">Agent 管理</div>
+                            </div>
+                            <p style="color: #718096; margin-bottom: 15px;">管理和监控 Agent 状态</p>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">启用此板块</span>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-card">
+                            <div class="agent-header">
+                                <div class="agent-avatar">💰</div>
+                                <div class="agent-name">Token 统计</div>
+                            </div>
+                            <p style="color: #718096; margin-bottom: 15px;">Token 使用量和费用统计</p>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">启用此板块</span>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-card">
+                            <div class="agent-header">
+                                <div class="agent-avatar">📋</div>
+                                <div class="agent-name">任务列表</div>
+                            </div>
+                            <p style="color: #718096; margin-bottom: 15px;">工单创建和管理</p>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">启用此板块</span>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-card">
+                            <div class="agent-header">
+                                <div class="agent-avatar">🛠️</div>
+                                <div class="agent-name">技能管理</div>
+                            </div>
+                            <p style="color: #718096; margin-bottom: 15px;">技能安装和配置</p>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">启用此板块</span>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-card">
+                            <div class="agent-header">
+                                <div class="agent-avatar">⚙️</div>
+                                <div class="agent-name">板块设置</div>
+                            </div>
+                            <p style="color: #718096; margin-bottom: 15px;">自定义界面布局</p>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">启用此板块</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
