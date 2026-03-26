@@ -22,59 +22,80 @@
             padding: 20px;
         }
         
-        /* 顶部导航 */
-        .navbar {
+        /* 布局容器 */
+        .layout-container {
+            display: flex;
+            min-height: calc(100vh - 40px);
+            gap: 20px;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 260px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
-            padding: 20px 40px;
-            margin-bottom: 30px;
+            padding: 30px 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
         }
         
         .logo {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 30px;
+            padding: 0 10px;
         }
         
-        .nav-tabs {
+        .nav-menu {
             display: flex;
+            flex-direction: column;
             gap: 10px;
         }
         
-        .nav-tab {
-            padding: 12px 24px;
+        .nav-item {
+            padding: 16px 20px;
             border-radius: 12px;
             border: none;
-            background: rgba(102, 126, 234, 0.1);
+            background: transparent;
             color: #4a5568;
             cursor: pointer;
             font-weight: 600;
+            font-size: 16px;
             transition: all 0.3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
-        .nav-tab:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: translateY(-2px);
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(4px);
         }
         
-        .nav-tab.active {
+        .nav-item.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
         }
         
+        .nav-icon {
+            font-size: 20px;
+        }
+        
         /* 主内容区 */
         .main-content {
-            max-width: 1600px;
-            margin: 0 auto;
+            flex: 1;
+            max-width: calc(100% - 280px);
+            padding: 20px 0;
         }
         
         .page {
@@ -344,19 +365,32 @@
     </style>
 </head>
 <body>
-    <!-- 顶部导航 -->
-    <nav class="navbar">
-        <div class="logo">🦞 灵眸 Dashboard</div>
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchPage('overview')">📊 概览</button>
-            <button class="nav-tab" onclick="switchPage('agents')">🤖 Agent</button>
-            <button class="nav-tab" onclick="switchPage('tokens')">💰 Token</button>
-            <button class="nav-tab" onclick="switchPage('tasks')">📋 任务</button>
-        </div>
-    </nav>
-    
-    <!-- 主内容区 -->
-    <main class="main-content">
+    <div class="layout-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">🦞 灵眸</div>
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchPage('overview')">
+                    <span class="nav-icon">📊</span>
+                    <span>概览</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('agents')">
+                    <span class="nav-icon">🤖</span>
+                    <span>Agent</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('tokens')">
+                    <span class="nav-icon">💰</span>
+                    <span>Token</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('tasks')">
+                    <span class="nav-icon">📋</span>
+                    <span>任务</span>
+                </button>
+            </nav>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
         <!-- 概览页面 -->
         <div id="overview" class="page active">
             <div class="stats-grid">
@@ -458,15 +492,16 @@
                 </table>
             </div>
         </div>
-    </main>
+        </main>
+    </div>
     
     <script>
         // 页面切换
         function switchPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
             
             // 加载对应数据
             if(pageId === 'agents') loadAgents();
